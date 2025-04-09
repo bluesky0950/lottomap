@@ -16,31 +16,26 @@
   <script>
     const mapContainer = document.getElementById('map');
     const mapOption = {
-      center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 중심
-      level: 5
+      center: new kakao.maps.LatLng(36.5, 127.8), // 전국 중간지점
+      level: 12
     };
     const map = new kakao.maps.Map(mapContainer, mapOption);
-    const geocoder = new kakao.maps.services.Geocoder();
 
     // JSON 파일 불러오기
     fetch('addresses.json')
       .then(response => response.json())
       .then(data => {
         data.forEach(store => {
-          geocoder.addressSearch(store.address, function(result, status) {
-            if (status === kakao.maps.services.Status.OK) {
-              const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-              const marker = new kakao.maps.Marker({
-                map: map,
-                position: coords
-              });
-              const infowindow = new kakao.maps.InfoWindow({
-                content: `<div style="padding:5px;font-size:13px;">${store.name}</div>`
-              });
-              kakao.maps.event.addListener(marker, 'click', function() {
-                infowindow.open(map, marker);
-              });
-            }
+          const coords = new kakao.maps.LatLng(store.lat, store.lon);
+          const marker = new kakao.maps.Marker({
+            map: map,
+            position: coords
+          });
+          const infowindow = new kakao.maps.InfoWindow({
+            content: `<div style="padding:5px;font-size:13px;">${store.address}</div>`
+          });
+          kakao.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map, marker);
           });
         });
       })
